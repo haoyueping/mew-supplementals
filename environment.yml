@@ -1,11 +1,15 @@
 name: mew
 channels:
   - conda-forge
+  - defaults
 dependencies:
   - python=3.10.2
   - numpy=1.22.2
   - pandas=1.4.1
+  - scipy=1.8.0
+  - matplotlib=3.5.1
   - networkx=2.7
   - psutil=5.9.0
-  - seaborn
-  - jupyterlab
+  - seaborn=0.11.2
+  - jupyterlab=3.4.3
+  - pytest=7.1.2

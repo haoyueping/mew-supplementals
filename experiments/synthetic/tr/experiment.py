@@ -1,3 +1,5 @@
+from multiprocessing import Pool
+
 import pandas as pd
 from numpy.random import default_rng
 
@@ -18,11 +20,11 @@ def generate_combs():
 
     m = 80
     tb_size = 5
-    for n in [100, 1000, 10000]:
+    for n in [100, 1_000, 10_000, 100_000, 1_000_000]:
         for batch in batch_list:
             combs.add((m, n, tb_size, batch))
 
-    return combs
+    return sorted(combs, key=lambda x: x[1])
 
 
 def generate_profile_df(m, n, tb_size, batch):
@@ -36,21 +38,29 @@ def generate_profile_df(m, n, tb_size, batch):
     return df
 
 
-def generate_profiles():
-    for (m, n, tb_size, batch) in generate_combs():
-        filename = f'{m}_candidates_{n}_voters_tb_size_{tb_size}_batch_{batch}.tsv'
-        fullpath = get_dir(__file__) / f'profiles/{filename}'
-        fullpath.parent.mkdir(parents=True, exist_ok=True)
+def worker(m, n, tb_size, batch):
+    filename = f'{m}_candidates_{n}_voters_tb_size_{tb_size}_batch_{batch}.tsv'
+    fullpath = get_dir(__file__) / f'profiles/{filename}'
+    fullpath.parent.mkdir(parents=True, exist_ok=True)
 
-        print(f'Generating {filename}')
-
+    if not fullpath.exists():
+        print(f'[INFO] Generating {filename}')
         df = generate_profile_df(m, n, tb_size, batch)
         df.to_csv(fullpath, index=False, sep='\t')
 
-    print('Done.')
+
+def generate_profiles():
+    with Pool(processes=10) as pool:
+        pool.starmap(worker, generate_combs())
+
+    print('[INFO] Profile generation... Done.')
+
 
 def run_experiment():
     sep = '\t'
+
+    threads = 1
+    grouping = True
 
     rule_list = ['Plurality', '2-approval', 'Borda']
 
@@ -58,8 +68,8 @@ def run_experiment():
     open_mode = 'a' if out_file.exists() else 'w'
     with open(out_file, open_mode, buffering=1) as out:
         if open_mode == 'w':
-            cols = ['m', 'n', 'tb_size', 'batch', 'rule', 'winners', 'score_upper', 'score_lower', 'num_pruned_voters',
-                    't_quick_bounds_sec', 't_pruning_sec', 't_solver_sec', 't_total_sec']
+            cols = ['m', 'n', 'tb_size', 'batch', 'rule', 'threads', 'grouping', 'winners', 'score_upper', 'score_lower',
+                    'num_pruned_voters', 't_quick_bounds_sec', 't_pruning_sec', 't_solver_sec', 't_total_sec']
             out.write(sep.join(cols) + '\n')
         else:
             df_existing = pd.read_csv(out_file, sep=sep)
@@ -68,7 +78,7 @@ def run_experiment():
             for rule in rule_list:
 
                 condition = f'(m == {m}) and (n == {n}) and (tb_size == {tb_size}) and (batch == {batch}) ' \
-                            f'and (rule == "{rule}")'
+                            f'and (rule == "{rule}") and (threads == {threads}) and (grouping == {grouping})'
 
                 is_existing = (open_mode == 'a') and (not df_existing.query(condition).empty)
 
@@ -82,7 +92,7 @@ def run_experiment():
                     profile: list[TruncatedRanking] = [eval(r) for r in df_in['truncated']]
                     answer = sequential_solver_of_voter_pruning(profile, get_rule_vector(rule, m))
 
-                    record = [m, n, tb_size, batch, rule, answer['winners'], answer['score_upper'],
+                    record = [m, n, tb_size, batch, rule, threads, grouping, answer['winners'], answer['score_upper'],
                               answer['score_lower'], answer['num_pruned_voters'], answer['t_quick_bounds_sec'],
                               answer['t_pruning_sec'], answer['t_solver_sec'], answer['t_total_sec']]
                     record = [str(i) for i in record]

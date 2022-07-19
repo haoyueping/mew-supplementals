@@ -94,5 +94,5 @@ def run_experiment():
 
 
 if __name__ == '__main__':
-    generate_profiles()
+    # generate_profiles()
     run_experiment()

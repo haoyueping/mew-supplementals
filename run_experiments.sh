@@ -3,6 +3,9 @@
 
 PYTHONPATH=./ python 'experiments/synthetic/posets/experiment.py' >> 'experiments/synthetic/posets/printout.txt'
 PYTHONPATH=./ python 'experiments/synthetic/posets_for_cover_width/experiment.py' >> 'experiments/synthetic/posets_for_cover_width/printout.txt'
+PYTHONPATH=./ python 'experiments/synthetic/posets_for_voter_grouping/experiment.py' >> 'experiments/synthetic/posets_for_voter_grouping/printout.txt'
+PYTHONPATH=./ python 'experiments/synthetic/posets_for_parallelization/experiment.py' >> 'experiments/synthetic/posets_for_parallelization/printout.txt'
+PYTHONPATH=./ python 'experiments/synthetic/posets_for_parallelization/experiment_cm.py' >> 'experiments/synthetic/posets_for_parallelization/printout_cm.txt'
 
 PYTHONPATH=./ python 'experiments/synthetic/tr/experiment.py' >> 'experiments/synthetic/tr/printout.txt'
 PYTHONPATH=./ python 'experiments/synthetic/pc/experiment.py' >> 'experiments/synthetic/pc/printout.txt'
@@ -19,3 +22,5 @@ PYTHONPATH=./ python 'experiments/synthetic/mallows_tr/experiment.py' >> 'experi
 PYTHONPATH=./ python 'experiments/real/movielens/experiment.py' >> 'experiments/real/movielens/printout.txt'
 PYTHONPATH=./ python 'experiments/real/crowdrank/experiment.py' >> 'experiments/real/crowdrank/printout.txt'
 PYTHONPATH=./ python 'experiments/real/travel/experiment.py' >> 'experiments/real/travel/printout.txt'
+
+PYTHONPATH=./ python 'experiments/synthetic/mpw/experiment.py' >> 'experiments/synthetic/mpw/printout.txt'

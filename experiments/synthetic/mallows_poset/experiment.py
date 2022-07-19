@@ -3,9 +3,8 @@ from numpy.random import default_rng
 
 from experiments.helper import get_dir, get_rule_vector, get_random_poset_by_rsm
 from ppref.models.mallows import Mallows
-from ppref.preferences.combined import MallowsWithPP, MallowsWithPoset
+from ppref.preferences.combined import MallowsWithPoset
 from ppref.preferences.poset import Poset
-from ppref.preferences.special import PartitionedPreferences
 from ppref.profile_solvers.solver_by_voter_pruning import sequential_solver_of_voter_pruning
 
 
@@ -95,5 +94,4 @@ def run_experiment():
 
 
 if __name__ == '__main__':
-    generate_profiles()
     run_experiment()

@@ -1,9 +1,8 @@
 import pandas as pd
-from numpy.random import default_rng, permutation
+from numpy.random import default_rng
 
 from experiments.helper import get_dir, get_rule_vector
 from ppref.models.mallows import Mallows
-from ppref.preferences.special import TruncatedRanking
 from ppref.profile_solvers.solver_by_voter_pruning import sequential_solver_of_voter_pruning
 
 
@@ -99,5 +98,4 @@ def run_experiment():
 
 
 if __name__ == '__main__':
-    generate_profiles()
     run_experiment()

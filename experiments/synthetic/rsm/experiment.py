@@ -1,5 +1,4 @@
 import pandas as pd
-from numpy.random import default_rng
 
 from experiments.helper import get_dir, get_rule_vector
 from experiments.synthetic.mallows.experiment import generate_combs
@@ -38,7 +37,11 @@ def run_experiment():
                     fullpath = get_dir(__file__).parent / f'mallows/profiles/{filename}'
                     df_in = pd.read_csv(fullpath, sep=sep)
 
-                    profile: list[RepeatedSelectionModelRV] = [RepeatedSelectionModelRV.generate_instance_from_mallows(eval(r)) for r in df_in['mallows']]
+                    profile: list[RepeatedSelectionModelRV] = []
+                    for r in df_in['mallows']:
+                        mal: Mallows = eval(r)
+                        profile.append(RepeatedSelectionModelRV.generate_instance_from_mallows(mal))
+
                     answer = sequential_solver_of_voter_pruning(profile, get_rule_vector(rule, m))
 
                     record = [m, n, phi, batch, rule, answer['winners'], answer['score_upper'],
